@@ -206,14 +206,6 @@ html, body {
 .card-news { order: 4; }
 
 @media (min-width: 720px) {
-  /* Calendar and weather get a generous, but capped, natural height so
-     several days are visible before their own internal scrollbar kicks in;
-     tasks/news are left uncapped since they're normally short. Only applies
-     to the fixed-viewport tablet/desktop layout below — on phone, cards
-     flow to their natural content height and the whole page scrolls. */
-  .card-calendar { max-height: 60vh; }
-  .card-weather { max-height: 46vh; }
-
   .grid {
     flex: 1;
     min-height: 0;
@@ -226,9 +218,18 @@ html, body {
       "calendar weather tasks";
   }
 
+  /* Calendar spans both rows and stretches to fill the grid cell's full
+     height, so it fills the available screen space rather than sizing to
+     its content. */
   .card-calendar { grid-area: calendar; order: initial; }
+
   .card-tasks { grid-area: tasks; order: initial; max-height: 24vh; }
-  .card-weather { grid-area: weather; order: initial; align-self: start; }
+
+  /* Weather sizes to its own content (align-self: start) instead of
+     stretching, but gets a generous capped height — 25% taller than the
+     original 46vh — so more forecast days are visible before its own
+     internal scrollbar kicks in. */
+  .card-weather { grid-area: weather; order: initial; align-self: start; max-height: 57.5vh; }
   .card-news { grid-area: news; order: initial; }
 }
 
