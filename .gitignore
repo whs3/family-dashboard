@@ -1,0 +1,6 @@
+node_modules/
+.env
+server/data/token.json
+server/data/config.json
+*.log
+.DS_Store

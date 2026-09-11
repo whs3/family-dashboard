@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Family Dashboard</title>
+<script>
+  (function () {
+    try {
+      var theme = localStorage.getItem("family-dashboard-theme") || "dark";
+      document.documentElement.setAttribute("data-theme", theme);
+      var tint = localStorage.getItem("family-dashboard-bg-tint") || "multi";
+      document.documentElement.setAttribute("data-bg-tint", tint);
+    } catch (e) {}
+  })();
+</script>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <div class="header-time">
+        <div id="clock" class="clock">--:--</div>
+        <div id="date" class="date">Loading date&hellip;</div>
+      </div>
+      <div class="header-status">
+        <span id="location-name" class="location"></span>
+        <button id="theme-btn" class="icon-btn" title="Switch theme" aria-label="Switch theme">&#127769;</button>
+        <button id="refresh-btn" class="icon-btn" title="Refresh now" aria-label="Refresh now">&#x21bb;</button>
+        <button id="settings-btn" class="icon-btn" title="Settings" aria-label="Settings">&#9881;</button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="card card-calendar" id="card-calendar">
+        <h2>Calendar</h2>
+        <div class="card-body" id="calendar-body">
+          <p class="loading">Loading&hellip;</p>
+        </div>
+      </section>
+
+      <section class="card card-tasks" id="card-tasks">
+        <h2>Tasks</h2>
+        <div class="card-body" id="tasks-body">
+          <p class="loading">Loading&hellip;</p>
+        </div>
+      </section>
+
+      <section class="card card-weather" id="card-weather">
+        <h2>Weather</h2>
+        <div class="card-body" id="weather-body">
+          <p class="loading">Loading&hellip;</p>
+        </div>
+      </section>
+
+      <section class="card card-news" id="card-news">
+        <h2>News</h2>
+        <div class="card-body" id="news-body">
+          <p class="loading">Loading&hellip;</p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span id="last-updated">Not yet updated</span>
+    </footer>
+  </div>
+
+  <div id="settings-modal" class="modal" hidden>
+    <div class="modal-content">
+      <h3>Settings</h3>
+
+      <label class="field">
+        Refresh interval (minutes)
+        <input type="number" id="refresh-interval-input" min="1" max="1440" />
+      </label>
+
+      <div class="field">
+        Background color
+        <div id="bg-tint-picker" class="swatch-row">
+          <button type="button" class="swatch swatch-multi" data-tint="multi" title="Multicolor" aria-label="Multicolor"></button>
+          <button type="button" class="swatch swatch-blue" data-tint="blue" title="Blue" aria-label="Blue"></button>
+          <button type="button" class="swatch swatch-red" data-tint="red" title="Red" aria-label="Red"></button>
+          <button type="button" class="swatch swatch-green" data-tint="green" title="Green" aria-label="Green"></button>
+          <button type="button" class="swatch swatch-orange" data-tint="orange" title="Orange" aria-label="Orange"></button>
+          <button type="button" class="swatch swatch-purple" data-tint="purple" title="Purple" aria-label="Purple"></button>
+          <button type="button" class="swatch swatch-plain" data-tint="plain" title="Plain" aria-label="Plain"></button>
+        </div>
+        <span class="field-hint">Applies to the light theme</span>
+      </div>
+
+      <div id="google-status" class="field google-status"></div>
+
+      <div class="modal-actions">
+        <button id="settings-cancel" class="btn btn-secondary">Cancel</button>
+        <button id="settings-save" class="btn btn-primary">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

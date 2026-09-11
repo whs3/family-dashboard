@@ -1,0 +1,580 @@
+:root {
+  --bg: #10141a;
+  --card-bg: #1b212b;
+  --card-border: #2a3140;
+  --text: #eef1f5;
+  --text-dim: #9aa4b2;
+  --accent: #6fb3ff;
+  --danger: #ff8080;
+  --radius: 14px;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #f6f4f0;
+  --card-bg: #ffffff;
+  --card-border: #e3ded4;
+  --text: #1d2129;
+  --text-dim: #656d7a;
+  --accent: #2f6fd6;
+  --danger: #d1394a;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Light theme gets a soft multicolor wash instead of a flat background,
+   painted directly as body's own background-image (layered under nothing
+   else — a parent's background always paints below its children, so this
+   is guaranteed visible in any gap the opaque cards don't cover, no
+   z-index/stacking tricks needed). */
+:root[data-theme="light"] body {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(circle at 6% 10%, rgba(91, 158, 245, 0.34), transparent 45%),
+    radial-gradient(circle at 94% 6%, rgba(235, 96, 96, 0.30), transparent 42%),
+    radial-gradient(circle at 12% 90%, rgba(96, 200, 130, 0.30), transparent 46%),
+    radial-gradient(circle at 90% 88%, rgba(240, 150, 70, 0.32), transparent 46%),
+    radial-gradient(circle at 50% 45%, rgba(180, 120, 230, 0.24), transparent 58%);
+  background-repeat: no-repeat;
+}
+
+/* Background color picker (Settings): a single dominant hue instead of the
+   default multicolor mix, or no wash at all for "plain". */
+:root[data-theme="light"][data-bg-tint="blue"] body {
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(91, 158, 245, 0.42), transparent 55%),
+    radial-gradient(circle at 85% 85%, rgba(91, 158, 245, 0.26), transparent 55%);
+}
+
+:root[data-theme="light"][data-bg-tint="red"] body {
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(235, 96, 96, 0.40), transparent 55%),
+    radial-gradient(circle at 85% 85%, rgba(235, 96, 96, 0.24), transparent 55%);
+}
+
+:root[data-theme="light"][data-bg-tint="green"] body {
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(96, 200, 130, 0.40), transparent 55%),
+    radial-gradient(circle at 85% 85%, rgba(96, 200, 130, 0.24), transparent 55%);
+}
+
+:root[data-theme="light"][data-bg-tint="orange"] body {
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(240, 150, 70, 0.42), transparent 55%),
+    radial-gradient(circle at 85% 85%, rgba(240, 150, 70, 0.26), transparent 55%);
+}
+
+:root[data-theme="light"][data-bg-tint="purple"] body {
+  background-image:
+    radial-gradient(circle at 15% 15%, rgba(180, 120, 230, 0.38), transparent 55%),
+    radial-gradient(circle at 85% 85%, rgba(180, 120, 230, 0.24), transparent 55%);
+}
+
+:root[data-theme="light"][data-bg-tint="plain"] body {
+  background-image: none;
+}
+
+.swatch-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.swatch {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 2px solid var(--card-border);
+  cursor: pointer;
+  padding: 0;
+}
+
+.swatch.is-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+.swatch-multi { background: conic-gradient(from 0deg, #5b9ef5, #eb6060, #60c882, #f09646, #b478e6, #5b9ef5); }
+.swatch-blue { background: #5b9ef5; }
+.swatch-red { background: #eb6060; }
+.swatch-green { background: #60c882; }
+.swatch-orange { background: #f09646; }
+.swatch-purple { background: #b478e6; }
+.swatch-plain { background: #d9d4c9; }
+
+.field-hint {
+  color: var(--text-dim);
+  font-size: 0.8em;
+}
+
+/* Phone (below 720px): a normal scrolling page — each card takes the
+   height its content needs, in reading order. */
+#app {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(0.75rem, 2vw, 1.5rem);
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+/* Tablet and large display (720px+): fixed to the viewport, nothing
+   scrolls except individual cards — designed for an always-on screen. */
+@media (min-width: 720px) {
+  html, body {
+    overflow: hidden;
+  }
+
+  #app {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+}
+
+.header {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.clock {
+  font-size: clamp(2rem, 6vw, 4.5rem);
+  font-weight: 600;
+  line-height: 1;
+}
+
+.date {
+  font-size: clamp(0.9rem, 1.8vw, 1.4rem);
+  color: var(--text-dim);
+  margin-top: 0.25rem;
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.location {
+  color: var(--text-dim);
+  font-size: clamp(0.85rem, 1.5vw, 1.1rem);
+}
+
+.icon-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  color: var(--text);
+  border-radius: 999px;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.75rem, 2vw, 1.25rem);
+}
+
+.card-calendar { order: 1; }
+.card-weather { order: 2; }
+.card-tasks { order: 3; }
+.card-news { order: 4; }
+
+@media (min-width: 720px) {
+  /* Calendar and weather get a generous, but capped, natural height so
+     several days are visible before their own internal scrollbar kicks in;
+     tasks/news are left uncapped since they're normally short. Only applies
+     to the fixed-viewport tablet/desktop layout below — on phone, cards
+     flow to their natural content height and the whole page scrolls. */
+  .card-calendar { max-height: 60vh; }
+  .card-weather { max-height: 46vh; }
+
+  .grid {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr 0.9fr;
+    grid-template-rows: 1fr auto;
+    grid-template-areas:
+      "calendar weather news"
+      "calendar weather tasks";
+  }
+
+  .card-calendar { grid-area: calendar; order: initial; }
+  .card-tasks { grid-area: tasks; order: initial; max-height: 24vh; }
+  .card-weather { grid-area: weather; order: initial; align-self: start; }
+  .card-news { grid-area: news; order: initial; }
+}
+
+@media (min-width: 1200px) {
+  .grid {
+    grid-template-columns: 1.3fr 1fr 0.9fr;
+  }
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: clamp(0.85rem, 1.6vw, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.card h2 {
+  margin: 0 0 0.6rem 0;
+  font-size: clamp(1rem, 1.6vw, 1.3rem);
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.card-body {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  font-size: clamp(0.9rem, 1.3vw, 1.1rem);
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-dim) transparent;
+}
+
+.card-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.card-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.card-body::-webkit-scrollbar-thumb {
+  background: var(--text-dim);
+  border-radius: 999px;
+}
+
+.card-body::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+.loading, .empty, .error {
+  color: var(--text-dim);
+}
+
+.error {
+  color: var(--danger);
+}
+
+/* Calendar */
+.event-list, .task-list, .news-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.event-item, .task-item, .news-item {
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.event-item:last-child, .task-item:last-child, .news-item:last-child {
+  border-bottom: none;
+}
+
+.event-time, .task-due {
+  color: var(--accent);
+  font-size: 0.85em;
+  display: block;
+}
+
+.event-title, .task-title {
+  font-weight: 500;
+}
+
+.event-location {
+  color: var(--text-dim);
+  font-size: 0.85em;
+}
+
+.event-calendar-dot {
+  display: inline-block;
+  width: 0.6em;
+  height: 0.6em;
+  border-radius: 50%;
+  margin-right: 0.4em;
+}
+
+.event-calendar-name {
+  color: var(--text-dim);
+  font-size: 0.8em;
+  margin-left: 0.5em;
+}
+
+.calendar-day-group {
+  margin-bottom: 0.9rem;
+}
+
+.calendar-day-group:last-child {
+  margin-bottom: 0;
+}
+
+.calendar-day-heading {
+  position: sticky;
+  top: -1px;
+  z-index: 1;
+  margin: 0 -0.2rem 0.5rem -0.2rem;
+  padding: 0.3rem 0.6rem;
+  background: var(--bg);
+  border-left: 4px solid var(--accent);
+  border-radius: 4px;
+  font-size: 0.95em;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+.calendar-day-heading.is-today {
+  border-left-color: var(--danger);
+  color: var(--accent);
+}
+
+.calendar-day-group .event-list {
+  padding-left: 0.6rem;
+  border-left: 1px solid var(--card-border);
+  margin-left: 0.1rem;
+}
+
+.task-list-heading {
+  color: var(--text-dim);
+  font-size: 0.8em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0.8rem 0 0.3rem 0;
+}
+
+.task-list-heading:first-child {
+  margin-top: 0;
+}
+
+/* News */
+.news-source {
+  color: var(--text-dim);
+  font-size: 0.8em;
+}
+
+.news-item a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.news-item a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* Weather */
+.weather-current {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.weather-icon {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+}
+
+.weather-temp {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 600;
+}
+
+.weather-meta {
+  color: var(--text-dim);
+  font-size: 0.85em;
+}
+
+.forecast-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.forecast-day {
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.forecast-day:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.forecast-day-main {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.forecast-day .icon {
+  font-size: 1.6rem;
+  flex: 0 0 auto;
+}
+
+.forecast-day-text {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.forecast-day-text .label {
+  font-weight: 500;
+}
+
+.forecast-day-text .condition {
+  color: var(--text-dim);
+  font-size: 0.85em;
+}
+
+.forecast-day-temps {
+  display: flex;
+  gap: 0.4rem;
+  flex: 0 0 auto;
+  font-size: 1.05em;
+}
+
+.forecast-day-temps .hi {
+  font-weight: 600;
+}
+
+.forecast-day-temps .lo {
+  color: var(--text-dim);
+}
+
+.forecast-day-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem;
+  margin-top: 0.35rem;
+  color: var(--text-dim);
+  font-size: 0.8em;
+}
+
+.connect-google {
+  display: inline-block;
+  margin-top: 0.5rem;
+  color: var(--accent);
+}
+
+.footer {
+  flex: 0 0 auto;
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+}
+
+/* Settings modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal[hidden] {
+  display: none;
+}
+
+.modal-content {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 360px;
+}
+
+.modal-content h3 {
+  margin-top: 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-dim);
+}
+
+.field input {
+  background: var(--bg);
+  border: 1px solid var(--card-border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.btn {
+  border-radius: 8px;
+  border: 1px solid var(--card-border);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #0a0e14;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text);
+}

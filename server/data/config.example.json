@@ -1,0 +1,29 @@
+{
+  "refreshIntervalMinutes": 15,
+  "weather": {
+    "locationName": "New York, NY 10001",
+    "latitude": 40.7128,
+    "longitude": -74.006,
+    "units": "imperial"
+  },
+  "news": {
+    "maxItems": 8,
+    "feeds": [
+      {
+        "name": "BBC World",
+        "url": "http://feeds.bbci.co.uk/news/world/rss.xml"
+      },
+      {
+        "name": "NPR News",
+        "url": "https://feeds.npr.org/1001/rss.xml"
+      }
+    ]
+  },
+  "calendar": {
+    "maxEvents": 50,
+    "daysAhead": 10
+  },
+  "tasks": {
+    "maxItems": 20
+  }
+}
