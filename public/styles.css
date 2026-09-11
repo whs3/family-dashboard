@@ -404,6 +404,22 @@ html, body {
 }
 
 /* Weather */
+
+/* Explicitly request color emoji fonts, in priority order, for the emoji
+   glyphs themselves (never applied to surrounding digit/text runs — Noto
+   Color Emoji also contains plain digit glyphs, for composing keycap
+   emoji like 1️⃣, with much wider spacing than a normal text font, which
+   would visibly space out numbers like "78" if this font-family were
+   applied more broadly). Some tablet/desktop Linux browsers otherwise
+   fall back to a flat/monochrome symbol font for emoji unless a color
+   emoji font is named first in the stack. */
+.icon,
+.emoji,
+.weather-icon {
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji",
+    "Segoe UI", Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
 .weather-current {
   display: flex;
   align-items: center;

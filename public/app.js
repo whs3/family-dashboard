@@ -241,9 +241,9 @@
               </div>
             </div>
             <div class="forecast-day-details">
-              <span title="Chance of precipitation">💧 ${day.precipChance}%${day.precipAmount ? ` (${day.precipAmount}${data.units === "imperial" ? "in" : "mm"})` : ""}</span>
-              <span title="Max wind">💨 ${day.windMax} ${windUnit}</span>
-              <span title="Sunrise / sunset">🌅 ${sunrise} · 🌇 ${sunset}</span>
+              <span title="Chance of precipitation"><span class="emoji">💧</span> ${day.precipChance}%${day.precipAmount ? ` (${day.precipAmount}${data.units === "imperial" ? "in" : "mm"})` : ""}</span>
+              <span title="Max wind"><span class="emoji">💨</span> ${day.windMax} ${windUnit}</span>
+              <span title="Sunrise / sunset"><span class="emoji">🌅</span> ${sunrise} · <span class="emoji">🌇</span> ${sunset}</span>
             </div>
           </li>
         `;
