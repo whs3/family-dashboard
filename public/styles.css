@@ -119,6 +119,96 @@ html, body {
   font-size: 0.8em;
 }
 
+.feed-list {
+  list-style: none;
+  margin: 0 0 0.5rem 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 8rem;
+  overflow-y: auto;
+}
+
+.feed-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  background: var(--bg);
+  border: 1px solid var(--card-border);
+  border-radius: 8px;
+}
+
+.feed-item.empty {
+  color: var(--text-dim);
+  justify-content: center;
+  font-size: 0.85rem;
+}
+
+.feed-item-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.feed-name {
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.feed-url {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.feed-remove-btn {
+  flex: 0 0 auto;
+  background: transparent;
+  border: 1px solid var(--card-border);
+  color: var(--text-dim);
+  border-radius: 999px;
+  width: 1.6rem;
+  height: 1.6rem;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.feed-remove-btn:hover {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.feed-add-row {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.feed-add-row input {
+  flex: 1 1 120px;
+  min-width: 0;
+  background: var(--bg);
+  border: 1px solid var(--card-border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 0.45rem;
+  font-size: 0.9rem;
+}
+
+.feed-add-row .btn {
+  flex: 0 0 auto;
+}
+
 /* Phone (below 720px): a normal scrolling page — each card takes the
    height its content needs, in reading order. */
 #app {
@@ -211,31 +301,26 @@ html, body {
     min-height: 0;
     overflow: hidden;
     display: grid;
-    grid-template-columns: 1.1fr 1fr 0.9fr;
+    grid-template-columns: 1fr 1.1fr 0.9fr;
     grid-template-rows: 1fr auto;
     grid-template-areas:
-      "calendar weather news"
-      "calendar weather tasks";
+      "weather calendar news"
+      "weather calendar tasks";
   }
 
-  /* Calendar spans both rows and stretches to fill the grid cell's full
-     height, so it fills the available screen space rather than sizing to
-     its content. */
+  /* Calendar and weather both span both rows and stretch to fill the grid
+     cell's full height, so they fill the available screen space rather
+     than sizing to their content. */
   .card-calendar { grid-area: calendar; order: initial; }
+  .card-weather { grid-area: weather; order: initial; }
 
   .card-tasks { grid-area: tasks; order: initial; max-height: 24vh; }
-
-  /* Weather sizes to its own content (align-self: start) instead of
-     stretching, but gets a generous capped height — 25% taller than the
-     original 46vh — so more forecast days are visible before its own
-     internal scrollbar kicks in. */
-  .card-weather { grid-area: weather; order: initial; align-self: start; max-height: 57.5vh; }
   .card-news { grid-area: news; order: initial; }
 }
 
 @media (min-width: 1200px) {
   .grid {
-    grid-template-columns: 1.3fr 1fr 0.9fr;
+    grid-template-columns: 1fr 1.3fr 0.9fr;
   }
 }
 

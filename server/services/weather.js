@@ -50,7 +50,7 @@ async function getWeather({ latitude, longitude, locationName, units = "imperial
   url.searchParams.set("wind_speed_unit", windUnit);
   url.searchParams.set("precipitation_unit", precipUnit);
   url.searchParams.set("timezone", "auto");
-  url.searchParams.set("forecast_days", "5");
+  url.searchParams.set("forecast_days", "7");
 
   const res = await fetch(url);
   if (!res.ok) {

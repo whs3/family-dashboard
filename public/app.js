@@ -325,8 +325,85 @@
     }
   }
 
+  function renderNewsFeeds(feeds) {
+    const list = el("news-feeds-list");
+    if (!feeds.length) {
+      list.innerHTML = `<li class="feed-item empty">No feeds added.</li>`;
+      return;
+    }
+    list.innerHTML = feeds
+      .map(
+        (feed, i) => `
+        <li class="feed-item">
+          <div class="feed-item-text">
+            <span class="feed-name">${escapeHtml(feed.name)}</span>
+            <span class="feed-url">${escapeHtml(feed.url)}</span>
+          </div>
+          <button type="button" class="feed-remove-btn" data-index="${i}" title="Remove feed" aria-label="Remove ${escapeAttr(feed.name)}">&times;</button>
+        </li>
+      `
+      )
+      .join("");
+    list.querySelectorAll(".feed-remove-btn").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        btn.disabled = true;
+        const res = await fetch(`/api/news-feeds/${btn.dataset.index}`, { method: "DELETE" });
+        if (res.ok) {
+          const cfg = await res.json();
+          renderNewsFeeds(cfg.news.feeds);
+          loadData();
+        } else {
+          const err = await res.json();
+          alert(err.error || "Failed to remove feed.");
+          btn.disabled = false;
+        }
+      });
+    });
+  }
+
+  async function loadNewsFeeds() {
+    const res = await fetch("/api/config");
+    const cfg = await res.json();
+    renderNewsFeeds(cfg.news.feeds || []);
+  }
+
+  el("news-feed-add-btn").addEventListener("click", async () => {
+    const nameInput = el("news-feed-name-input");
+    const urlInput = el("news-feed-url-input");
+    const name = nameInput.value.trim();
+    const url = urlInput.value.trim();
+    if (!name || !url) {
+      alert("Enter both a name and a feed URL.");
+      return;
+    }
+    const btn = el("news-feed-add-btn");
+    btn.disabled = true;
+    btn.textContent = "Adding…";
+    try {
+      const res = await fetch("/api/news-feeds", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, url }),
+      });
+      if (res.ok) {
+        const cfg = await res.json();
+        renderNewsFeeds(cfg.news.feeds);
+        nameInput.value = "";
+        urlInput.value = "";
+        loadData();
+      } else {
+        const err = await res.json();
+        alert(err.error || "Failed to add feed.");
+      }
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Add";
+    }
+  });
+
   function openSettings() {
     loadGoogleStatus();
+    loadNewsFeeds();
     el("settings-modal").hidden = false;
   }
 
