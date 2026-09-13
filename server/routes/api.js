@@ -23,9 +23,11 @@ router.get("/config", (req, res) => {
   res.json(config.load());
 });
 
-router.post("/config", (req, res) => {
-  const { refreshIntervalMinutes } = req.body || {};
+router.post("/config", async (req, res) => {
+  const { refreshIntervalMinutes, newsMaxItems } = req.body || {};
+  const cfg = config.load();
   const updates = {};
+  let newsChanged = false;
 
   if (refreshIntervalMinutes !== undefined) {
     const minutes = Number(refreshIntervalMinutes);
@@ -35,8 +37,20 @@ router.post("/config", (req, res) => {
     updates.refreshIntervalMinutes = minutes;
   }
 
+  if (newsMaxItems !== undefined) {
+    const count = Number(newsMaxItems);
+    if (!Number.isInteger(count) || count < 1 || count > 50) {
+      return res.status(400).json({ error: "newsMaxItems must be a whole number between 1 and 50." });
+    }
+    updates.news = { ...cfg.news, maxItems: count };
+    newsChanged = true;
+  }
+
   const next = config.update(updates);
   scheduler.rescheduleNow();
+  if (newsChanged) {
+    await scheduler.refresh();
+  }
   res.json(next);
 });
 

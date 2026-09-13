@@ -282,17 +282,41 @@
     footer.textContent = `Last updated ${time} · refreshes every ${refreshIntervalMinutes} min${errorText}`;
   }
 
+  function renderAll(data) {
+    renderCalendar(data.calendar);
+    renderTasks(data.tasks);
+    renderNews(data.news);
+    renderWeather(data.weather);
+    renderLastUpdated(data.generatedAt, data.errors);
+  }
+
   async function loadData() {
     try {
       const res = await fetch("/api/data");
-      const data = await res.json();
-      renderCalendar(data.calendar);
-      renderTasks(data.tasks);
-      renderNews(data.news);
-      renderWeather(data.weather);
-      renderLastUpdated(data.generatedAt, data.errors);
+      renderAll(await res.json());
     } catch (err) {
       el("last-updated").textContent = `Failed to load data: ${err.message}`;
+    }
+  }
+
+  // "Refresh now" re-fetches from calendar/weather/news/tasks right away
+  // rather than just re-reading the last cached copy (which is all
+  // loadData()/GET /api/data does), so the button visibly does something.
+  async function refreshNow() {
+    const btn = el("refresh-btn");
+    btn.disabled = true;
+    try {
+      const res = await fetch("/api/refresh", { method: "POST" });
+      if (res.ok) {
+        renderAll(await res.json());
+      } else {
+        const err = await res.json();
+        el("last-updated").textContent = `Failed to refresh: ${err.error || res.statusText}`;
+      }
+    } catch (err) {
+      el("last-updated").textContent = `Failed to refresh: ${err.message}`;
+    } finally {
+      btn.disabled = false;
     }
   }
 
@@ -306,6 +330,7 @@
     const cfg = await res.json();
     refreshIntervalMinutes = cfg.refreshIntervalMinutes;
     el("refresh-interval-input").value = refreshIntervalMinutes;
+    el("news-max-items-input").value = cfg.news.maxItems;
     schedulePolling();
   }
 
@@ -365,6 +390,7 @@
     const res = await fetch("/api/config");
     const cfg = await res.json();
     renderNewsFeeds(cfg.news.feeds || []);
+    el("news-max-items-input").value = cfg.news.maxItems;
   }
 
   el("news-feed-add-btn").addEventListener("click", async () => {
@@ -412,16 +438,17 @@
   }
 
   el("theme-btn").addEventListener("click", toggleTheme);
-  el("refresh-btn").addEventListener("click", loadData);
+  el("refresh-btn").addEventListener("click", refreshNow);
   el("settings-btn").addEventListener("click", openSettings);
   el("settings-cancel").addEventListener("click", closeSettings);
 
   el("settings-save").addEventListener("click", async () => {
     const minutes = Number(el("refresh-interval-input").value);
+    const maxItems = Number(el("news-max-items-input").value);
     const res = await fetch("/api/config", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refreshIntervalMinutes: minutes }),
+      body: JSON.stringify({ refreshIntervalMinutes: minutes, newsMaxItems: maxItems }),
     });
     if (res.ok) {
       const cfg = await res.json();
